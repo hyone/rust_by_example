@@ -1,4 +1,7 @@
 mod checked {
+    use std::error::Error;
+    use std::fmt;
+
     #[derive(Debug)]
     enum MathError {
         DivisionByZero,
@@ -7,6 +10,31 @@ mod checked {
     }
 
     type MathResult = Result<f64, MathError>;
+
+    impl fmt::Display for MathError {
+        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+            self.description().fmt(f)
+        }
+    }
+
+    impl Error for MathError {
+        fn description(&self) -> &str {
+            match *self {
+                MathError::NegativeLogarithm
+                    => "logarithm of negative number",
+                MathError::DivisionByZero
+                    => "division by zero",
+                MathError::NegativeSquareRoot
+                    => "square root of negative number",
+            }
+        }
+
+        fn cause(&self) -> Option<&Error> {
+            match *self {
+                _ => None
+            }
+        }
+    }
 
     fn div(x: f64, y: f64) -> MathResult {
         if y == 0.0 {
@@ -32,23 +60,17 @@ mod checked {
         }
     }
 
-    fn op_(x: f64, y: f64) -> MathResult {
+    fn op_(x: f64, y: f64) -> Result<f64, Box<Error>> {
         let ratio = try!(div(x, y));
         let ln    = try!(ln(ratio));
-        sqrt(ln)
+        let sqrt  = try!(sqrt(ln));
+        Ok(sqrt)
     }
 
     pub fn op(x: f64, y: f64) {
         match op_(x, y) {
-            Err(why) => panic!(match why {
-                MathError::NegativeLogarithm
-                    => "logarithm of negative number",
-                MathError::DivisionByZero
-                    => "division by zero",
-                MathError::NegativeSquareRoot
-                    => "square root of negative number",
-            }),
             Ok(value) => println!("{}", value),
+            Err(e)    => println!("Error: {}", e),
         }
     }
 }
