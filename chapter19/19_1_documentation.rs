@@ -3,7 +3,7 @@
 //   # NOTE: `19_1_documentation` is invalid module name,
 //   #       so use symlink whose name is `documentation` instead.
 //   $ rustc --crate-type=lib chapter19/documentation.rs
-//   $ rustdoc --test --extern documentation=libdoc.rlib chapter19/documentation.rs
+//   $ rustdoc --test --extern documentation=libdocumentation.rlib chapter19/documentation.rs
 //
 //   running 1 test
 //   test Person::new_0 ... ok
